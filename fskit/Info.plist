@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>MAC_NTFS</string>
+	<key>CFBundleExecutable</key>
+	<string>NTFSModule</string>
+	<key>CFBundleIdentifier</key>
+	<string>dev.macntfs.app.fsmodule</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>NTFSModule</string>
+	<key>CFBundlePackageType</key>
+	<string>XPC!</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>LSMinimumSystemVersion</key>
+	<string>26.0</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>GPLv2</string>
+	<key>EXAppExtensionAttributes</key>
+	<dict>
+		<key>EXExtensionPointIdentifier</key>
+		<string>com.apple.fskit.fsmodule</string>
+		<key>EXExtensionPrincipalClass</key>
+		<string>NTFSModule.NTFSFileSystem</string>
+		<!-- mount -F -t ntfsrw /dev/diskNsM /path -->
+		<key>FSShortName</key>
+		<string>ntfsrw</string>
+		<key>FSSupportsBlockResources</key>
+		<true/>
+		<key>FSSupportsServerURLs</key>
+		<false/>
+		<key>FSActivateOptionSyntax</key>
+		<dict>
+			<key>shortOptions</key>
+			<string>ro:</string>
+		</dict>
+		<key>FSPersonalities</key>
+		<dict>
+			<key>NTFS-RW</key>
+			<dict>
+				<key>FSName</key>
+				<string>Windows NT File System (MAC_NTFS read-write)</string>
+			</dict>
+		</dict>
+		<!--
+		  No FSMediaTypes on purpose: macOS keeps auto-mounting NTFS read-only
+		  with its own driver, and the MAC_NTFS app remounts a drive read-write
+		  only when asked to.
+		-->
+	</dict>
+</dict>
+</plist>

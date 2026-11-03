@@ -17,7 +17,7 @@ ENGINE_SRC := $(wildcard engine/src/*.c)
 ENGINE_OBJ := $(ENGINE_SRC:engine/src/%.c=$(OUT)/engine/%.o)
 ENGINE_LIB := $(OUT)/libmn.a
 
-.PHONY: all clean test
+.PHONY: all clean test app
 all: $(OUT)/macntfs $(OUT)/test-set-dirty
 
 $(OUT)/engine/%.o: engine/src/%.c engine/include/mn.h $(NTFS3G)/lib/libntfs-3g.a
@@ -47,6 +47,13 @@ FSKIT_SRC := fskit/Sources/Engine.swift fskit/Sources/BlockDevice.swift fskit/So
 # Drives the FSKit volume code directly, without the FSKit daemon.
 $(OUT)/volume-harness: $(FSKIT_SRC) fskit/Tests/VolumeHarness.swift $(ENGINE_LIB)
 	$(SWIFTC) $(SWIFTFLAGS) $(FSKIT_SRC) fskit/Tests/VolumeHarness.swift $(ENGINE_LINK) -framework FSKit -o $@
+
+# Lists NTFS disks the way the app sees them; `disk-probe mount-rw diskN` tries a remount.
+$(OUT)/disk-probe: app/Sources/Disks.swift app/Sources/Mounter.swift app/Tests/DiskProbe.swift
+	$(SWIFTC) -parse-as-library -target $(ARCH)-apple-macos26.0 -sdk $(SDK) $^ -framework DiskArbitration -o $@
+
+app:
+	scripts/build-app.sh
 
 $(NTFS3G)/lib/libntfs-3g.a:
 	scripts/build-ntfs3g.sh

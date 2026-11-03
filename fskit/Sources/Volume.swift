@@ -85,7 +85,7 @@ final class NTFSVolume: FSVolume, FSVolume.Operations, FSVolume.ReadWriteOperati
 
     var volumeStatistics: FSStatFSResult {
         let s = engine.space()
-        let r = FSStatFSResult(fileSystemTypeName: "ntfs")
+        let r = FSStatFSResult(fileSystemTypeName: "ntfsrw")   // matches FSShortName; the app uses it to tell our mounts apart
         let bs = UInt64(s.cluster_size)
         r.blockSize = Int(s.cluster_size)
         r.ioSize = 1 << 20
