@@ -1,0 +1,9 @@
+#!/bin/sh
+# Stub pkg-config for building ntfs-3g without Homebrew.
+# ntfs-3g's configure insists pkg-config exists, but only uses it to look up
+# FUSE and GnuTLS, both of which we disable. Report every package as missing.
+case "$1" in
+    --version) echo "0.29.2" ;;
+    --atleast-pkgconfig-version) exit 0 ;;
+    *) exit 1 ;;
+esac

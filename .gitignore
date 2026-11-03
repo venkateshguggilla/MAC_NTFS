@@ -1,0 +1,5 @@
+build/
+third_party/*.tgz
+.DS_Store
+xcuserdata/
+DerivedData/
