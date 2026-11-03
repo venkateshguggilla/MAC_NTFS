@@ -56,7 +56,31 @@ enum {
     MN_OPEN_READ_WRITE = 1 << 0,  /* refused with HIBERNATED/UNCLEAN when unsafe */
 };
 
+/* Open a disk image or a device node (/dev/rdiskNsM). */
 mn_err mn_volume_open(const char *device, unsigned flags, mn_volume **out);
+
+/*
+ * Pluggable block I/O, for hosts that can't hand libntfs-3g a file descriptor
+ * (FSKit gives the extension an FSBlockDeviceResource instead).
+ *
+ * The engine only ever calls read/write with offset and length that are
+ * multiples of block_size; it does read-modify-write for anything smaller.
+ * Callbacks return 0 or an errno value. A short read past the end of the
+ * device is not an error: report it through *done.
+ */
+typedef struct {
+    void    *ctx;
+    uint32_t block_size;        /* required I/O alignment, power of two (1 = none) */
+    uint64_t size;              /* device size in bytes */
+    int (*read)(void *ctx, void *buf, uint64_t offset, size_t len, size_t *done);
+    int (*write)(void *ctx, const void *buf, uint64_t offset, size_t len);
+    int (*sync)(void *ctx);
+    void (*release)(void *ctx); /* optional: called once the volume is closed */
+} mn_io;
+
+/* Takes ownership of io: io->release is called on failure, or when the volume closes. */
+mn_err mn_volume_open_io(const mn_io *io, const char *name, unsigned flags, mn_volume **out);
+
 mn_err mn_volume_close(mn_volume *vol);
 
 typedef struct {
@@ -72,7 +96,25 @@ typedef struct {
     bool     unclean_journal;   /* $LogFile has unreplayed transactions */
 } mn_volume_info;
 
+/* Full report including safety checks. Reads several metadata files. */
 mn_err mn_volume_get_info(mn_volume *vol, mn_volume_info *info);
+
+/* Cheap: sizes are tracked in memory after open. For statfs. */
+typedef struct {
+    uint32_t cluster_size;
+    uint64_t total_clusters;
+    uint64_t free_clusters;
+    uint64_t total_inodes;      /* MFT records */
+    uint64_t free_inodes;
+} mn_volume_space;
+
+void mn_volume_get_space(mn_volume *vol, mn_volume_space *space);
+
+/* Volume label (UTF-8), may be empty. */
+const char *mn_volume_label(mn_volume *vol);
+
+/* NTFS volume serial number from the boot sector. */
+uint64_t mn_volume_serial(mn_volume *vol);
 
 /* ---- Items ---- */
 

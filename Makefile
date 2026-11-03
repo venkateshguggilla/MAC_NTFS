@@ -36,11 +36,26 @@ $(OUT)/test-set-dirty: tests/set-dirty.c $(NTFS3G)/lib/libntfs-3g.a
 	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $< $(LDLIBS) -o $@
 
+SWIFTC   := xcrun swiftc
+SDK      := $(shell xcrun --sdk macosx --show-sdk-path)
+ARCH     ?= $(shell uname -m)
+SWIFTFLAGS := -parse-as-library -target $(ARCH)-apple-macos26.0 -sdk $(SDK) \
+              -import-objc-header engine/include/mn.h
+ENGINE_LINK := $(ENGINE_LIB) $(LDLIBS)
+FSKIT_SRC := fskit/Sources/Engine.swift fskit/Sources/BlockDevice.swift fskit/Sources/Volume.swift
+
+# Drives the FSKit volume code directly, without the FSKit daemon.
+$(OUT)/volume-harness: $(FSKIT_SRC) fskit/Tests/VolumeHarness.swift $(ENGINE_LIB)
+	$(SWIFTC) $(SWIFTFLAGS) $(FSKIT_SRC) fskit/Tests/VolumeHarness.swift $(ENGINE_LINK) -framework FSKit -o $@
+
 $(NTFS3G)/lib/libntfs-3g.a:
 	scripts/build-ntfs3g.sh
 
-test: all
-	python3 tests/test_cli.py -v
+test: all $(OUT)/volume-harness
+	tests/run-harness.sh
+	python3 tests/test_cli.py
+	@echo '==> again with 4 KiB block alignment (like 4Kn disks / FSKit)'
+	MN_ALIGN=4096 python3 tests/test_cli.py
 
 clean:
 	rm -rf $(OUT)

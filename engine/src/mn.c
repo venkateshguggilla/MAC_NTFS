@@ -1,7 +1,7 @@
 /*
  * mn.c - MAC_NTFS engine implementation over libntfs-3g.
  */
-#include "mn.h"
+#include "mn_private.h"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -17,6 +17,7 @@
 #include <ntfs-3g/unistr.h>
 #include <ntfs-3g/volume.h>
 #include <ntfs-3g/device.h>
+#include <ntfs-3g/cache.h>
 
 #include <sys/stat.h>
 #include <stdio.h>
@@ -24,6 +25,7 @@
 
 struct mn_volume {
     ntfs_volume *nv;
+    void *io_private;           /* backend owned by mn_io.c */
     bool read_only;
 };
 
@@ -108,41 +110,101 @@ static void setup_logging(void)
         ntfs_log_set_handler(ntfs_log_handler_null);
 }
 
-mn_err mn_volume_open(const char *device, unsigned flags, mn_volume **out)
+mn_err mn_volume_open_io(const mn_io *io, const char *name, unsigned flags, mn_volume **out)
 {
     *out = NULL;
     setup_logging();
 
     bool rw = flags & MN_OPEN_READ_WRITE;
+    mn_volume *vol = NULL;
+    struct ntfs_device *dev = NULL;
+    mn_err err = MN_OK;
+
+    if (rw && !io->write)
+        err = MN_ERR_READ_ONLY;
+    else if (!(vol = calloc(1, sizeof(*vol))))
+        err = MN_ERR_NOMEM;
+    else if (!(dev = mn_io_device_alloc(io, name)))
+        err = map_errno(errno);
+    if (err) {
+        if (io->release)
+            io->release(io->ctx);
+        free(vol);
+        return err;
+    }
+    void *priv = dev->d_private;
+
     /*
      * Read-write never passes NTFS_MNT_RECOVER, NTFS_MNT_IGNORE_HIBERFILE or
      * NTFS_MNT_MAY_RDONLY: hibernated or unclean volumes fail outright.
      */
-    ntfs_volume *nv = ntfs_mount(device, rw ? NTFS_MNT_NONE : NTFS_MNT_RDONLY);
-    if (!nv)
-        return map_mount_errno(errno);
+    ntfs_volume *nv = ntfs_device_mount(dev, rw ? NTFS_MNT_NONE : NTFS_MNT_RDONLY);
+    if (!nv) {
+        err = map_mount_errno(errno);
+        ntfs_device_free(dev);
+        mn_io_device_release(priv);
+        free(vol);
+        return err;
+    }
+    ntfs_create_lru_caches(nv);   /* as ntfs_mount() does */
+    /* Scan the cluster and MFT bitmaps once; libntfs-3g keeps the counts current. */
+    ntfs_volume_get_free_space(nv);
 
     /* Show hidden files, hide NTFS metadata ($MFT, ...). */
     ntfs_set_shown_files(nv, FALSE, TRUE, FALSE);
 
-    mn_volume *vol = calloc(1, sizeof(*vol));
-    if (!vol) {
-        ntfs_umount(nv, FALSE);
-        return MN_ERR_NOMEM;
-    }
     vol->nv = nv;
+    vol->io_private = priv;
     vol->read_only = !rw;
     *out = vol;
     return MN_OK;
+}
+
+mn_err mn_volume_open(const char *device, unsigned flags, mn_volume **out)
+{
+    *out = NULL;
+    mn_io io;
+    int e = mn_io_open_fd(device, flags & MN_OPEN_READ_WRITE, &io);
+    if (e)
+        return e == EACCES || e == EPERM ? MN_ERR_NO_PRIVILEGE : map_errno(e);
+    mn_err err = mn_volume_open_io(&io, device, flags, out);
+    /* On failure the device layer has already released io; nothing else to free. */
+    return err;
 }
 
 mn_err mn_volume_close(mn_volume *vol)
 {
     if (!vol)
         return MN_OK;
+    /* ntfs_umount() closes and frees the ntfs_device, but not our backend. */
     mn_err err = ntfs_umount(vol->nv, FALSE) ? map_errno(errno) : MN_OK;
+    mn_io_device_release(vol->io_private);
     free(vol);
     return err;
+}
+
+void mn_volume_get_space(mn_volume *vol, mn_volume_space *space)
+{
+    ntfs_volume *nv = vol->nv;
+    space->cluster_size = nv->cluster_size;
+    space->total_clusters = (uint64_t)nv->nr_clusters;
+    space->free_clusters = nv->free_clusters > 0 ? (uint64_t)nv->free_clusters : 0;
+    space->total_inodes = (uint64_t)(nv->mft_na->initialized_size >> nv->mft_record_size_bits);
+    space->free_inodes = nv->free_mft_records > 0 ? (uint64_t)nv->free_mft_records : 0;
+}
+
+const char *mn_volume_label(mn_volume *vol)
+{
+    return vol->nv->vol_name ? vol->nv->vol_name : "";
+}
+
+uint64_t mn_volume_serial(mn_volume *vol)
+{
+    NTFS_BOOT_SECTOR bs;
+    struct ntfs_device *dev = vol->nv->dev;
+    if (dev->d_ops->pread(dev, &bs, sizeof(bs), 0) != sizeof(bs))
+        return 0;
+    return le64_to_cpu(bs.volume_serial_number);
 }
 
 /* Mirrors libntfs-3g's private ntfs_volume_check_logfile(). */
