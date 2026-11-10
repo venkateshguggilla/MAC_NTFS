@@ -1,0 +1,542 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		34993CF4E28F11F3EF23103A = {
+			isa = PBXBuildFile;
+			fileRef = C57F345223F417B5EB93DCE3;
+		};
+		3594958405630BE6AC24E36C = {
+			isa = PBXBuildFile;
+			fileRef = "0EABE33A72E3112BDCF01531";
+		};
+		53C6AD11FF89BAB3C35B0DEF = {
+			isa = PBXBuildFile;
+			fileRef = "7ED12FBC6E65D6F62E584483";
+		};
+		60A57B089A4813D8450B1963 = {
+			isa = PBXBuildFile;
+			fileRef = F9FEC298DDC738634D2A62C1;
+		};
+		A268918424F7BBC11DB752F2 = {
+			isa = PBXBuildFile;
+			fileRef = CFEE55A02984C083C52C8EFC;
+			settings = {
+				ATTRIBUTES = (
+					RemoveHeadersOnCopy,
+				);
+			};
+		};
+		B2BB63BB73A5EAC0397A8011 = {
+			isa = PBXBuildFile;
+			fileRef = "3F17F36D87A595C042A3FAFF";
+		};
+		B372DE8B3183E8674038F6F7 = {
+			isa = PBXBuildFile;
+			fileRef = "740F9354CBDB1438CC43F6C5";
+		};
+		D9B29972B04924DB10EBF930 = {
+			isa = PBXBuildFile;
+			fileRef = F141E0E545AE3DC3C8F4E735;
+		};
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6332FA84B7BDEC43CA23DF4F = {
+			isa = PBXContainerItemProxy;
+			containerPortal = "46F86FAA6BBF9AC94A7E4595";
+			proxyType = "1";
+			remoteGlobalIDString = "3B349027366F684A61204B00";
+			remoteInfo = NTFSModule;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BAE1492BDE49D13FF7E211EB = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = "2147483647";
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = "16";
+			files = (
+				A268918424F7BBC11DB752F2,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0EABE33A72E3112BDCF01531 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = Mounter.swift;
+			sourceTree = "<group>";
+		};
+		3F17F36D87A595C042A3FAFF = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = App.swift;
+			sourceTree = "<group>";
+		};
+		740F9354CBDB1438CC43F6C5 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = BlockDevice.swift;
+			sourceTree = "<group>";
+		};
+		7ED12FBC6E65D6F62E584483 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = Disks.swift;
+			sourceTree = "<group>";
+		};
+		84337AD8D27FCD69AF2C4FC2 = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = "0";
+			path = MAC_NTFS.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		852F626BAE10E63C1768D2DD = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mn.h;
+			sourceTree = "<group>";
+		};
+		C57F345223F417B5EB93DCE3 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = FileSystem.swift;
+			sourceTree = "<group>";
+		};
+		CFEE55A02984C083C52C8EFC = {
+			isa = PBXFileReference;
+			explicitFileType = "wrapper.extensionkit-extension";
+			includeInIndex = "0";
+			path = NTFSModule.appex;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E802BC287F78BAB4D2471BBB = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			path = Info.plist;
+			sourceTree = "<group>";
+		};
+		EED105F84A898B2E554CD602 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.entitlements;
+			path = NTFSModule.entitlements;
+			sourceTree = "<group>";
+		};
+		F141E0E545AE3DC3C8F4E735 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = Volume.swift;
+			sourceTree = "<group>";
+		};
+		F44D415059DBEA42820F1296 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			path = Info.plist;
+			sourceTree = "<group>";
+		};
+		F9FEC298DDC738634D2A62C1 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.swift;
+			path = Engine.swift;
+			sourceTree = "<group>";
+		};
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		44086AC38F580DDA340DB7B6 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		EA0E94CCFDE7AC0C26702028 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		288032AD7BDD36883D02725D = {
+			isa = PBXGroup;
+			children = (
+				"740F9354CBDB1438CC43F6C5",
+				F9FEC298DDC738634D2A62C1,
+				C57F345223F417B5EB93DCE3,
+				F141E0E545AE3DC3C8F4E735,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		29EAC6F10A28036022C99443 = {
+			isa = PBXGroup;
+			children = (
+				"288032AD7BDD36883D02725D",
+				F44D415059DBEA42820F1296,
+				EED105F84A898B2E554CD602,
+			);
+			path = fskit;
+			sourceTree = "<group>";
+		};
+		2E0748F938D1AE5193A1FCAE = {
+			isa = PBXGroup;
+			children = (
+				"852F626BAE10E63C1768D2DD",
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		2F3A6B1E78F896718625FF06 = {
+			isa = PBXGroup;
+			children = (
+				"84337AD8D27FCD69AF2C4FC2",
+				CFEE55A02984C083C52C8EFC,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		518DA81DB9B99529C0C0AEBE = {
+			isa = PBXGroup;
+			children = (
+				"82CF2A43A7100F086D7FCFDD",
+				"7B86E98FA2B577A7016EB9C3",
+				"29EAC6F10A28036022C99443",
+				"2F3A6B1E78F896718625FF06",
+			);
+			sourceTree = "<group>";
+		};
+		7B86E98FA2B577A7016EB9C3 = {
+			isa = PBXGroup;
+			children = (
+				"2E0748F938D1AE5193A1FCAE",
+			);
+			path = engine;
+			sourceTree = "<group>";
+		};
+		82CF2A43A7100F086D7FCFDD = {
+			isa = PBXGroup;
+			children = (
+				A8E3DD39FEBDA15EE7162822,
+				E802BC287F78BAB4D2471BBB,
+			);
+			path = app;
+			sourceTree = "<group>";
+		};
+		A8E3DD39FEBDA15EE7162822 = {
+			isa = PBXGroup;
+			children = (
+				"3F17F36D87A595C042A3FAFF",
+				"7ED12FBC6E65D6F62E584483",
+				"0EABE33A72E3112BDCF01531",
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3B349027366F684A61204B00 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FDA4A50F4ADCDF2B4290434C;
+			buildPhases = (
+				"2391B659AE5A002A3F65810B",
+				"90CFA57A547DC142CB0A200E",
+				EA0E94CCFDE7AC0C26702028,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NTFSModule;
+			productName = NTFSModule;
+			productReference = CFEE55A02984C083C52C8EFC;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
+		E3435DDA2687639586BF0B70 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = "1D97B77EAD2380603A3F2A82";
+			buildPhases = (
+				C4BB4888821B00A15964B0CF,
+				"44086AC38F580DDA340DB7B6",
+				BAE1492BDE49D13FF7E211EB,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				"5A9082BF535D9EBF6E6C908A",
+			);
+			name = MacNTFS;
+			productName = MAC_NTFS;
+			productReference = "84337AD8D27FCD69AF2C4FC2";
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = "1";
+				LastSwiftUpdateCheck = "2650";
+				LastUpgradeCheck = "2650";
+				TargetAttributes = {
+					E3435DDA2687639586BF0B70 = {
+						CreatedOnToolsVersion = "26.5";
+					};
+					"3B349027366F684A61204B00" = {
+						CreatedOnToolsVersion = "26.5";
+					};
+				};
+			};
+			buildConfigurationList = "1F4E3D13C2320EDA50221924";
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = "0";
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = "518DA81DB9B99529C0C0AEBE";
+			productRefGroup = "2F3A6B1E78F896718625FF06";
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E3435DDA2687639586BF0B70,
+				"3B349027366F684A61204B00",
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2391B659AE5A002A3F65810B = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Build C engine (make)";
+			outputPaths = (
+				"$(SRCROOT)/build/out/libmn.a",
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+			shellPath = /bin/sh;
+			shellScript = "make -C \"$SRCROOT\" build/out/libmn.a
+";
+			alwaysOutOfDate = "1";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		90CFA57A547DC142CB0A200E = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+				B372DE8B3183E8674038F6F7,
+				"60A57B089A4813D8450B1963",
+				"34993CF4E28F11F3EF23103A",
+				D9B29972B04924DB10EBF930,
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		C4BB4888821B00A15964B0CF = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = "2147483647";
+			files = (
+				B2BB63BB73A5EAC0397A8011,
+				"53C6AD11FF89BAB3C35B0DEF",
+				"3594958405630BE6AC24E36C",
+			);
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5A9082BF535D9EBF6E6C908A = {
+			isa = PBXTargetDependency;
+			target = "3B349027366F684A61204B00";
+			targetProxy = "6332FA84B7BDEC43CA23DF4F";
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0615050D04BD2DC4E6CFFAFF = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NRZQU2K9AD;
+				MACOSX_DEPLOYMENT_TARGET = "26.0";
+				SWIFT_VERSION = "5.0";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				CURRENT_PROJECT_VERSION = "1";
+				MARKETING_VERSION = "0.1.0";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = MAC_NTFS;
+				PRODUCT_MODULE_NAME = MacNTFS;
+				EXECUTABLE_NAME = MacNTFS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.venky.macntfs;
+				INFOPLIST_FILE = app/Info.plist;
+				OTHER_LDFLAGS = (
+					"-framework",
+					DiskArbitration,
+					"-framework",
+					FSKit,
+				);
+			};
+			name = Debug;
+		};
+		2761849A6D0E26CA4E1817A1 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NRZQU2K9AD;
+				MACOSX_DEPLOYMENT_TARGET = "26.0";
+				SWIFT_VERSION = "5.0";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				CURRENT_PROJECT_VERSION = "1";
+				MARKETING_VERSION = "0.1.0";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = MAC_NTFS;
+				PRODUCT_MODULE_NAME = MacNTFS;
+				EXECUTABLE_NAME = MacNTFS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.venky.macntfs;
+				INFOPLIST_FILE = app/Info.plist;
+				OTHER_LDFLAGS = (
+					"-framework",
+					DiskArbitration,
+					"-framework",
+					FSKit,
+				);
+			};
+			name = Release;
+		};
+		4A43692AD8BCEEB8B727C85B = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = macosx;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+			};
+			name = Debug;
+		};
+		70CE29FEBBD59D71E870199A = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NRZQU2K9AD;
+				MACOSX_DEPLOYMENT_TARGET = "26.0";
+				SWIFT_VERSION = "5.0";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				CURRENT_PROJECT_VERSION = "1";
+				MARKETING_VERSION = "0.1.0";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = NTFSModule;
+				PRODUCT_MODULE_NAME = NTFSModule;
+				PRODUCT_BUNDLE_IDENTIFIER = com.venky.macntfs.fsmodule;
+				INFOPLIST_FILE = fskit/Info.plist;
+				CODE_SIGN_ENTITLEMENTS = fskit/NTFSModule.entitlements;
+				SWIFT_OBJC_BRIDGING_HEADER = engine/include/mn.h;
+				OTHER_LDFLAGS = (
+					"$(SRCROOT)/build/out/libmn.a",
+					"$(SRCROOT)/build/ntfs-3g/prefix/lib/libntfs-3g.a",
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					FSKit,
+				);
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C28449456A5A705A7479770B = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = macosx;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+			};
+			name = Release;
+		};
+		EB895C6D878D54EF9F516502 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NRZQU2K9AD;
+				MACOSX_DEPLOYMENT_TARGET = "26.0";
+				SWIFT_VERSION = "5.0";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				CURRENT_PROJECT_VERSION = "1";
+				MARKETING_VERSION = "0.1.0";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = NTFSModule;
+				PRODUCT_MODULE_NAME = NTFSModule;
+				PRODUCT_BUNDLE_IDENTIFIER = com.venky.macntfs.fsmodule;
+				INFOPLIST_FILE = fskit/Info.plist;
+				CODE_SIGN_ENTITLEMENTS = fskit/NTFSModule.entitlements;
+				SWIFT_OBJC_BRIDGING_HEADER = engine/include/mn.h;
+				OTHER_LDFLAGS = (
+					"$(SRCROOT)/build/out/libmn.a",
+					"$(SRCROOT)/build/ntfs-3g/prefix/lib/libntfs-3g.a",
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					FSKit,
+				);
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D97B77EAD2380603A3F2A82 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"0615050D04BD2DC4E6CFFAFF",
+				"2761849A6D0E26CA4E1817A1",
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = Release;
+		};
+		1F4E3D13C2320EDA50221924 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"4A43692AD8BCEEB8B727C85B",
+				C28449456A5A705A7479770B,
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = Release;
+		};
+		FDA4A50F4ADCDF2B4290434C = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"70CE29FEBBD59D71E870199A",
+				EB895C6D878D54EF9F516502,
+			);
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595;
+}

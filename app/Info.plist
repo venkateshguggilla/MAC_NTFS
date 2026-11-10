@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>MacNTFS</string>
 	<key>CFBundleIdentifier</key>
-	<string>dev.macntfs.app</string>
+	<string>com.venky.macntfs</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

@@ -4,7 +4,7 @@ import Foundation
 import FSKit
 import os
 
-let log = Logger(subsystem: "dev.macntfs.fsmodule", category: "fs")
+let log = Logger(subsystem: "com.venky.macntfs.fsmodule", category: "fs")
 
 @main
 struct NTFSExtension: UnaryFileSystemExtension {

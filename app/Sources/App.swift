@@ -21,6 +21,8 @@ final class AppModel: ObservableObject {
     @Published var busy: Set<String> = []
     @Published var lastError: String?
     @Published var extensionEnabled: Bool?
+    /// Set when mount(8) couldn't reach the module, the reliable sign it isn't enabled.
+    @Published var extensionUnreachable = false
     @AppStorage("autoMountReadWrite") var autoMount = false
 
     init() {
@@ -37,8 +39,10 @@ final class AppModel: ObservableObject {
         Task {
             do {
                 try await action()
+                extensionUnreachable = false
             } catch {
                 lastError = error.localizedDescription
+                if lastError?.contains("Unable to invoke task") == true { extensionUnreachable = true }
             }
             busy.remove(disk.bsdName)
             monitor.refresh()
@@ -60,8 +64,8 @@ struct MenuContent: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("NTFS drives").font(.headline)
 
-            if model.extensionEnabled == false || model.extensionEnabled == nil {
-                ExtensionNotice(enabled: model.extensionEnabled)
+            if model.extensionEnabled == false || model.extensionUnreachable {
+                ExtensionNotice()
             }
 
             if monitor.disks.isEmpty {
@@ -89,13 +93,9 @@ struct MenuContent: View {
 }
 
 struct ExtensionNotice: View {
-    let enabled: Bool?
-
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Label(enabled == nil ? "File system extension not registered"
-                                 : "File system extension is turned off",
-                  systemImage: "exclamationmark.triangle")
+            Label("File system extension is turned off", systemImage: "exclamationmark.triangle")
                 .font(.callout.weight(.semibold))
             Text("Turn on MAC_NTFS in System Settings › General › Login Items & Extensions › File System Extensions.")
                 .font(.caption)

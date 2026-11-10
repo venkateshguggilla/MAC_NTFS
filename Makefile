@@ -50,7 +50,7 @@ $(OUT)/volume-harness: $(FSKIT_SRC) fskit/Tests/VolumeHarness.swift $(ENGINE_LIB
 
 # Lists NTFS disks the way the app sees them; `disk-probe mount-rw diskN` tries a remount.
 $(OUT)/disk-probe: app/Sources/Disks.swift app/Sources/Mounter.swift app/Tests/DiskProbe.swift
-	$(SWIFTC) -parse-as-library -target $(ARCH)-apple-macos26.0 -sdk $(SDK) $^ -framework DiskArbitration -o $@
+	$(SWIFTC) -parse-as-library -target $(ARCH)-apple-macos26.0 -sdk $(SDK) $^ -framework DiskArbitration -framework FSKit -o $@
 
 app:
 	scripts/build-app.sh

@@ -99,6 +99,9 @@ final class NTFSVolume: FSVolume, FSVolume.Operations, FSVolume.ReadWriteOperati
         r.usedBytes = (s.total_clusters - s.free_clusters) * bs
         r.totalFiles = s.total_inodes
         r.freeFiles = s.free_inodes
+        // The kernel mount stays read-write even when the engine refused writes,
+        // so tell the app through statfs's f_fssubtype.
+        r.fileSystemSubType = engine.readOnly ? Self.subtypeProtectedReadOnly : 0
         return r
     }
 
@@ -144,6 +147,8 @@ final class NTFSVolume: FSVolume, FSVolume.Operations, FSVolume.ReadWriteOperati
     // MARK: Attributes
 
     static let hiddenFlag: UInt32 = 0x8000     // UF_HIDDEN
+    /// f_fssubtype for a volume opened read-only (hibernated / unclean). Mirrored in the app.
+    static let subtypeProtectedReadOnly = 1
 
     func attributes(of item: NTFSItem) throws -> FSItem.Attributes {
         let a = try engine.stat(item.inode)

@@ -87,7 +87,8 @@ final class DiskMonitor: ObservableObject {
             var st = statfs()
             if statfs(path.path, &st) == 0 {
                 let type = withUnsafeBytes(of: st.f_fstypename) { String(cString: $0.bindMemory(to: CChar.self).baseAddress!) }
-                let ro = st.f_flags & UInt32(MNT_RDONLY) != 0
+                // Our module reports subtype 1 when it refused writes (see Volume.swift).
+                let ro = st.f_flags & UInt32(MNT_RDONLY) != 0 || st.f_fssubtype == 1
                 if type == "ntfsrw" {
                     state = ro ? .protectedReadOnly : .readWrite
                 } else {

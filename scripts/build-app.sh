@@ -42,7 +42,7 @@ echo "==> Compiling app"
 xcrun swiftc -O -parse-as-library -target "$TARGET" -sdk "$SDK" \
     -module-name MacNTFS \
     app/Sources/*.swift \
-    -framework SwiftUI -framework DiskArbitration \
+    -framework SwiftUI -framework DiskArbitration -framework FSKit \
     -o "$APP/Contents/MacOS/MacNTFS"
 cp app/Info.plist "$APP/Contents/Info.plist"
 

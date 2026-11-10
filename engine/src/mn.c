@@ -189,8 +189,16 @@ void mn_volume_get_space(mn_volume *vol, mn_volume_space *space)
     space->cluster_size = nv->cluster_size;
     space->total_clusters = (uint64_t)nv->nr_clusters;
     space->free_clusters = nv->free_clusters > 0 ? (uint64_t)nv->free_clusters : 0;
-    space->total_inodes = (uint64_t)(nv->mft_na->initialized_size >> nv->mft_record_size_bits);
-    space->free_inodes = nv->free_mft_records > 0 ? (uint64_t)nv->free_mft_records : 0;
+    /*
+     * The MFT grows into free space, so count the records free clusters could
+     * hold as well. Same accounting as ntfs-3g's statfs.
+     */
+    s64 in_free = nv->free_clusters > 0 ? nv->free_clusters : 0;
+    int delta = nv->cluster_size_bits - nv->mft_record_size_bits;
+    in_free = delta >= 0 ? in_free << delta : in_free >> -delta;
+    space->total_inodes = (uint64_t)((nv->mftbmp_na->allocated_size << 3) + in_free);
+    s64 free_inodes = in_free + nv->free_mft_records;
+    space->free_inodes = free_inodes > 0 ? (uint64_t)free_inodes : 0;
 }
 
 const char *mn_volume_label(mn_volume *vol)

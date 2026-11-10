@@ -1,6 +1,7 @@
 // Mounter.swift - swaps a drive between macOS's read-only mount and ours.
 
 import Foundation
+import FSKit
 
 enum MountError: LocalizedError {
     case command(String, String)
@@ -14,7 +15,7 @@ enum MountError: LocalizedError {
 
 enum Mounter {
     static let fsType = "ntfsrw"        // FSShortName in fskit/Info.plist
-    static let extensionID = "dev.macntfs.app.fsmodule"
+    static let extensionID = "com.venky.macntfs.fsmodule"
 
     /// Where read-write mounts go. /Volumes is root-only, so use a folder in the user's home.
     static func mountPoint(for disk: NTFSDisk) throws -> URL {
@@ -54,12 +55,13 @@ enum Mounter {
         }
     }
 
-    /// Whether the user has enabled the extension in System Settings (best effort).
+    /// Whether the extension is enabled in System Settings, or nil if unknown.
+    /// FSClient doesn't always list third-party modules, so nil is common.
     static func extensionEnabled() async -> Bool? {
-        guard let out = try? await run("/usr/bin/pluginkit", ["-m", "-i", extensionID]) else { return nil }
-        let line = out.trimmingCharacters(in: .whitespacesAndNewlines)
-        if line.isEmpty { return nil }      // not registered yet
-        return line.hasPrefix("+")
+        guard let modules = try? await FSClient.shared.installedExtensions,
+              let ours = modules.first(where: { $0.bundleIdentifier == extensionID })
+        else { return nil }
+        return ours.isEnabled
     }
 
     @discardableResult

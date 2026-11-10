@@ -7,11 +7,11 @@ that remounts NTFS drives read-write on request.
 
 Licensed under GPLv2 (see `LICENSE`), matching libntfs-3g.
 
-> **Status: all four phases are built, but the FSKit module has not run inside
-> FSKit yet.** macOS only loads FSKit modules signed by a developer team with
-> the FSKit entitlement (see [Signing](#signing-needs-an-apple-developer-account)).
-> Everything below the FSKit boundary is tested against disk images.
-> Try it on drives whose data you have backed up.
+> **Status: working end to end on macOS 26.** The signed FSKit module mounts
+> NTFS read-write, and file operations through it have been verified on disk
+> images (see [Verified through FSKit](#verified-through-fskit)). It hasn't been
+> tried on real Windows-formatted drives yet, so use drives whose data you have
+> backed up.
 
 ## Roadmap
 
@@ -20,8 +20,8 @@ Licensed under GPLv2 (see `LICENSE`), matching libntfs-3g.
 | 0 | Build libntfs-3g from source; NTFS test images | done |
 | 1 | Engine read API + `macntfs` CLI (`info ls stat cat get`) | done, tested |
 | 2 | Engine write API + CLI (`put mkdir rm mv truncate touch`) | done, tested |
-| 3 | FSKit module (`NTFSModule.appex`) | built; volume ops tested via harness; **needs team signing to load** |
-| 4 | Menu-bar app: detect drives, remount read-write, Fast Startup warnings | built; disk detection and remount fallback tested |
+| 3 | FSKit module (`NTFSModule.appex`) | done, verified through FSKit on images |
+| 4 | Menu-bar app: detect drives, remount read-write, Fast Startup warnings | done, verified on images |
 
 ## Architecture
 
@@ -91,44 +91,66 @@ build/out/macntfs disk.img put ~/photo.jpg /Photos/photo.jpg
 sudo build/out/macntfs /dev/rdisk4s1 info     # real device (unmount it first to write)
 ```
 
-## Signing (needs an Apple Developer account)
+## Signing and installing (needs an Apple Developer account)
 
 macOS loads an FSKit module only if it is signed by a team and carries the
-`com.apple.developer.fskit.fsmodule` entitlement. Ad-hoc builds compile and run
-the app, but the module doesn't register: `mount -F -t ntfsrw` fails with
-"Unable to invoke task", and the app falls back to the macOS read-only mount.
+`com.apple.developer.fskit.fsmodule` entitlement. `MacNTFS.xcodeproj` uses
+Xcode's automatic signing, which sets all of that up:
 
-Once your account is active:
+```bash
+scripts/gen-xcodeproj.py YOUR_TEAM_ID     # only if your team isn't NRZQU2K9AD
+xcodebuild -project MacNTFS.xcodeproj -scheme MacNTFS -configuration Debug \
+    -derivedDataPath build/xcode -allowProvisioningUpdates -allowProvisioningDeviceRegistration build
+ditto build/xcode/Build/Products/Debug/MAC_NTFS.app /Applications/MAC_NTFS.app
+open /Applications/MAC_NTFS.app
+```
 
-1. In the developer portal, register App IDs `dev.macntfs.app` and
-   `dev.macntfs.app.fsmodule` (or your own prefix; also change the IDs in
-   `app/Info.plist`, `fskit/Info.plist` and `app/Sources/Mounter.swift`), and
-   enable the **FSKit Module** capability on the second.
-2. Create a macOS development provisioning profile for `dev.macntfs.app.fsmodule`.
-3. Build signed:
-   ```bash
-   SIGN_IDENTITY="Apple Development: Your Name (TEAMID)" \
-   PROVISIONING_PROFILE=~/Downloads/fsmodule.provisionprofile \
-   scripts/build-app.sh
-   ```
-4. Copy `build/app/MAC_NTFS.app` to `/Applications` and open it once.
-5. Turn it on in **System Settings › General › Login Items & Extensions ›
-   File System Extensions**. The menu-bar app links straight there.
-6. Plug in an NTFS drive, then choose **Mount read-write** from the menu bar.
-   It's mounted under `~/NTFS Volumes/<label>` and shows in Finder's sidebar.
+The first build registers the App IDs `com.venky.macntfs` and
+`com.venky.macntfs.fsmodule` with the FSKit Module capability, registers this
+Mac as a device, and creates the profiles. For your own prefix, change
+`APP_ID` in `scripts/gen-xcodeproj.py`, the IDs in both `Info.plist` files, and
+`extensionID` in `app/Sources/Mounter.swift`. (Xcode must be signed in to the
+account: Settings › Accounts.)
 
-To share builds with other people, sign with a Developer ID and notarize.
+Then turn the module on in **System Settings › General › Login Items &
+Extensions › File System Extensions**, plug in an NTFS drive, and choose
+**Mount read-write** from the menu bar. The drive is mounted under
+`~/NTFS Volumes/<label>` and shows in Finder's sidebar. From a shell:
+`mount -F -t ntfsrw /dev/diskNsM <dir>`.
 
-### First things to check once it loads
+`scripts/build-app.sh` still makes an ad-hoc build, which is useful for CI but
+can't load the module. To share builds with other people, archive with a
+Developer ID and notarize.
 
-These parts of the FSKit integration can only be verified against the real
-FSKit runtime:
+### Verified through FSKit
 
-- `ls -la` on the mount shows `.` and `..` exactly once (`DirectoryListing.rows`).
-- Finder copy, duplicate and rename, and `cp -p`. Look for setattr errors in
-  Console (subsystem `dev.macntfs.fsmodule`).
-- Free space shown in Finder matches `macntfs <dev> info`.
-- A volume Windows left hibernated mounts read-only and the app shows the warning.
+On an NTFS image remounted through the signed module (`fskit` in `mount`):
+
+- Writing, copying (50 MB, `ditto` of a source tree, 200 small files),
+  appending, truncating and regrowing, renaming (including case-only renames),
+  moving files and folders, `rm`, `rmdir`.
+- `cp -p` and `touch -t` timestamps, `chflags hidden`, and `chmod 444` (stored
+  as the Windows read-only attribute). `.` and `..` appear exactly once.
+- Windows-invalid names and case-insensitive duplicates are refused, and `df`
+  shows correct sizes and inode counts.
+- Afterwards the image passes `ntfsfix`, and macOS's own NTFS driver reads
+  every file back byte for byte.
+- An image with a hibernated `hiberfil.sys` mounts read-only: writes fail with
+  `EROFS`, the image stays byte for byte unchanged, and the app shows the Fast
+  Startup warning.
+
+Things to know:
+
+- **`._` files:** the module doesn't support extended attributes yet, so macOS
+  stores them in AppleDouble `._name` files, as it does on FAT and exFAT.
+  Windows shows them as small hidden-looking files.
+- **Read-only fallback isn't visible to the kernel:** FSKit gives a module no
+  way to make the mount itself read-only, so a protected volume still mounts as
+  read-write and every write is refused with `EROFS`. The module sets statfs's
+  `f_fssubtype` to 1 in this case, which is how the app tells.
+- `FSClient` doesn't list third-party modules reliably, so the app shows its
+  "turn on the extension" notice only after a mount fails with "Unable to
+  invoke task".
 
 ## Layout
 
@@ -137,12 +159,14 @@ engine/      C engine over libntfs-3g (mn.h is the only public header)
 cli/         macntfs command-line tool
 fskit/       FSKit module sources, Info.plist, entitlements, volume harness
 app/         menu-bar app sources, Info.plist, disk-probe test tool
-scripts/     build-ntfs3g.sh, build-app.sh, make/verify-test-image.sh
+MacNTFS.xcodeproj  generated by scripts/gen-xcodeproj.py (for signing)
+scripts/     build-ntfs3g.sh, build-app.sh, gen-xcodeproj.py, make/verify-test-image.sh
 tests/       test_cli.py (end-to-end), set-dirty.c, run-harness.sh
 ```
 
 ## Known limitations
 
+- No extended attributes (see `._` files above), symlinks or hard links.
 - Each operation opens and closes the NTFS inode, and one lock serializes the
   whole volume. That's correct but slow for big directory trees.
 - Large directories are re-read for each enumeration that starts from the beginning.
